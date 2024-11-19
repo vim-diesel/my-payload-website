@@ -1,5 +1,6 @@
 // storage-adapter-import-placeholder
 import { sqliteAdapter } from '@payloadcms/db-sqlite'
+import { s3Storage } from '@payloadcms/storage-s3'
 
 import sharp from 'sharp' // sharp-import
 import path from 'path'
@@ -69,7 +70,21 @@ export default buildConfig({
   globals: [Header, Footer],
   plugins: [
     ...plugins,
-    // storage-adapter-placeholder
+    s3Storage({
+      collections: {
+        media: true,
+      },
+      bucket: process.env.R2_BUCKET || '',
+      config: {
+        credentials: {
+          accessKeyId: process.env.R2_ACCESS_KEY_ID || '',
+          secretAccessKey: process.env.R2_SECRET_ACCESS_KEY || '',
+        },
+        region: 'auto',
+        // ... Other S3 configuration
+        endpoint: process.env.R2_ENDPOINT || '',
+      },
+    })
   ],
   secret: process.env.PAYLOAD_SECRET,
   sharp,
